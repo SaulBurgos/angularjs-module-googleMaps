@@ -1,7 +1,7 @@
 angularjs-Module-GoogleMaps
 ===========================
 
-Module to use Google Maps like a service. I like use Google maps like a service and not like a directive, because I need to use a lot geometry methods.
+Module to use Google Maps like a service. I like use Google maps like a service and not like a directive, because I need  use a lot of  geometry methods.
 
 List of Methods:
 
