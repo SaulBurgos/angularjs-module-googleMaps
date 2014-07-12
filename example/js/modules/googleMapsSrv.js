@@ -1,4 +1,9 @@
-﻿'use strict';
+﻿/*
+ angularjs-module-googleMaps v0.0.1
+ https://github.com/SaulBurgos/angularjs-module-googleMaps
+*/
+
+'use strict';
 
 /* Services */
 
