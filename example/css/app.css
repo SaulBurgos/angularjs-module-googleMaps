@@ -1,0 +1,7 @@
+/* app css stylesheet */
+#googleMap {
+  width: 500px;
+  height: 300px;
+  margin: 0 auto;
+  border: 2px solid gray;
+}
