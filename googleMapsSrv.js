@@ -129,9 +129,13 @@ angular.module('googleMapsSrv', [])
          });
       };
 
-      for (var i = 0; i < data.length; i++) {           
-         attachEvent(data[i],i);
-      };  
+      if(!angular.isArray(data)) {
+         attachEvent(data,0);
+      } else {
+         for (var i = 0; i < data.length; i++) {           
+            attachEvent(data[i].marker,i);
+         };    
+      }   
    };
    //remove markers
    googleMaps.prototype.removeMarkers = function(data) {
