@@ -57,9 +57,19 @@ angular.module('googleMapsSrv', [])
       this.drawingManager.setMap(null);
    };
     
-   googleMaps.prototype.createMarkers = function(data, customOptions, insertMarkerInObj) {
+   googleMaps.prototype.createMarkers = function(data, customOptions, insertMarkerInObj,viewportOnMarkers) {
+      if(viewportOnMarkers) {
+         var boundAdjust = new google.maps.LatLngBounds();
+      }
+
       if(!angular.isArray(data)) {
-         var positionSingle = new google.maps.LatLng(data.lat,data.lng);
+         
+         if(typeof data.latLng === 'undefined') {
+            var positionSingle = new google.maps.LatLng(data.lat,data.lng);
+         } else {
+            var positionSingle = data.latLng;
+         }
+
          var markerSingle = new google.maps.Marker({
             position: positionSingle,
             map: this.map,
@@ -73,10 +83,15 @@ angular.module('googleMapsSrv', [])
          if(typeof customOptions !== 'undefined') {
             markerSingle.setOptions(customOptions);
          }
+
+         if(viewportOnMarkers) {
+            boundAdjust.extend(markerSingle.getPosition());
+            this.map.fitBounds(boundAdjust);
+         }
          return markerSingle;
       }
 
-      var markers = [];        
+      var markers = [];      
       for (var i = 0; i < data.length; i++) {
          var position = new google.maps.LatLng(data[i].lat,data[i].lng);
 
@@ -94,8 +109,15 @@ angular.module('googleMapsSrv', [])
             data[i].marker = marker;
          }
 
+         if(viewportOnMarkers) {
+            boundAdjust.extend(marker.getPosition());
+         }
          markers.push(data[i]);                
-      };        
+      }; 
+          
+      if(viewportOnMarkers) {
+         this.map.fitBounds(boundAdjust); 
+      }  
       return markers;
    };
 
