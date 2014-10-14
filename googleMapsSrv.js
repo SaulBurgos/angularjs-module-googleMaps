@@ -19,6 +19,7 @@ angular.module('googleMapsSrv', [])
       this.drawingManager;
       this.autocomplete;
       this.fixedBounds = {};
+      this.infoWindow = new google.maps.InfoWindow ({maxWidth:400});
    };
     
    googleMaps.prototype.loadMap = function(customOptions,callbackMapReady) {
@@ -56,6 +57,11 @@ angular.module('googleMapsSrv', [])
    googleMaps.prototype.removeDrawingMode = function() {
       this.drawingManager.setMap(null);
    };
+   
+   googleMaps.prototype.openInfoWindow = function(content,anchor) {
+      this.infoWindow.setContent(content);
+      this.infoWindow.open(this.map,anchor);
+   };  
     
    googleMaps.prototype.createMarkers = function(data, customOptions, insertMarkerInObj,viewportOnMarkers) {
       if(viewportOnMarkers) {
