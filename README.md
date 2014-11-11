@@ -54,7 +54,7 @@ List of Methods:
 ```
 **Load the module in your index.html**
 ```
-<script src="js/googleMapsSrv.js"></script>
+<script src="googleMapsSrv.js"></script>
 ```
 **Inject the module:**
 ```
