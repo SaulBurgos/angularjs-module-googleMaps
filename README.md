@@ -5,11 +5,21 @@ Module to use Google Maps like a service. I like use Google maps like a service 
 
 List of Methods:
 
+* addCustomMethods
+* activeDrawingMode
+* attachEventToElement
 * calculateCircleArea
 * calculateAreaRectangle
 * calculateAreaPolygon
 * calculateTotalDistancePolyline
 * calculateDistanceBetween2Points
+* centerMapOnPoints
+* createPolygon
+* createPolyline
+* createRectangle
+* createCircle
+* createMarkers
+* createAutocomplete
 * updateMap
 * deserializeCircle
 * deserializePolygon
@@ -24,25 +34,17 @@ List of Methods:
 * serializeMvcArray
 * serializeRectangle
 * serializeMarker
-* createAutocomplete
 * geolocateUser
-* addCustomMethods
-* centerMapOnPoints
-* createPolygon
-* createPolyline
-* createRectangle
-* createCircle
 * getBoundsFromString
 * getRandomPositionByBounds
-* restrictBounds
+* generateRandomMarkers
 * showMarkers
 * removeMarkers
-* attachEventToElement
-* generateRandomMarkers
-* createMarkers
+* removeDrawingMode 
 * removeDrawingMode
-* activeDrawingMode
+* restrictBounds
 * loadMap
+* openInfoWindow 
 
 
 ##Setup:
