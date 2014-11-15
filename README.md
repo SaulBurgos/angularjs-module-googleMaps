@@ -74,3 +74,5 @@ angular.module('myApp', [
 
 });
 ```
+
+Demo here  [demo](http://saulburgos.com/apps/googlemapModule/#/view1)
