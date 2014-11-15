@@ -9,8 +9,9 @@
 
 angular.module('googleMapsSrv', [])
 
-.factory('googleMapsService',function() {
+.factory('googleMapsService',function($q) {
    var that; 
+
    var googleMaps = function(containerHtml,scope) {        
       that = this;
       this.containerHTML = containerHtml;
@@ -22,7 +23,8 @@ angular.module('googleMapsSrv', [])
       this.infoWindow = new google.maps.InfoWindow ({maxWidth:400});
    };
     
-   googleMaps.prototype.loadMap = function(customOptions,callbackMapReady) {
+   googleMaps.prototype.loadMap = function(customOptions) {
+      var deferred = $q.defer();
       var mapDefaultOptions = {
          center: new google.maps.LatLng(-25.363882,131.044922),
          zoom: 8
@@ -35,17 +37,18 @@ angular.module('googleMapsSrv', [])
          optionsMap = mapDefaultOptions;
       }        
 
-      //prevent load the map twice
-      if( typeof this.map === 'undefined') {
-         this.map = new google.maps.Map(this.containerHTML,optionsMap);
-         google.maps.event.addListenerOnce(this.map, 'idle', function() {
-         
-            if(typeof callbackMapReady !== 'undefined') {
-               that.currentScope.$apply(callbackMapReady());
-            }         
-         });
+      try {
+          //prevent load the map twice
+         if( typeof this.map === 'undefined') {
+            this.map = new google.maps.Map(this.containerHTML,optionsMap);
+            google.maps.event.addListenerOnce(this.map, 'idle', function() {         
+               that.currentScope.$apply(deferred.resolve());
+            });
+         }
+      } catch(err) {
+          deferred.reject('Error loading map');    
       }
-    
+      return deferred.promise; 
    };
    //require load drawing library on the script 
    googleMaps.prototype.activeDrawingMode = function() {
@@ -148,22 +151,32 @@ angular.module('googleMapsSrv', [])
       return markerRandom;
    };
 
-   //attach any events to overlays,receivea array of overlays
-   googleMaps.prototype.attachEventToElement = function(data,eventName,callback) {
+   //attach any events to overlays,receive array of overlays
+   googleMaps.prototype.attachEventToElement = function(data,eventName) {
+      var deferred = $q.defer();
 
-      function attachEvent (marker,index) {
-         google.maps.event.addListener(marker,eventName,function(){
-            that.currentScope.$apply(callback(this,index));
+      function attachEvent (overlay,index) {
+         google.maps.event.addListener(overlay,eventName,function() {
+            that.currentScope.$apply(deferred.notify({
+               index: index,
+               element: overlay
+            }));
          });
       };
 
       if(!angular.isArray(data)) {
          attachEvent(data,0);
       } else {
-         for (var i = 0; i < data.length; i++) {           
-            attachEvent(data[i].marker,i);
+
+         for (var i = 0; i < data.length; i++) { 
+            if(typeof data[i].marker !== 'undefined') {
+               attachEvent(data[i].overlay,i);
+            } else {
+               attachEvent(data[i],i);
+            }
          };    
-      }   
+      }
+      return deferred.promise; 
    };
    //remove markers
    googleMaps.prototype.removeMarkers = function(data) {
