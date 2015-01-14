@@ -12,7 +12,7 @@ angular.module('googleMapsSrv', [])
 .factory('googleMapsService',function($q) {
    var that; 
 
-   var googleMaps = function(containerHtml,scope) {
+    var googleMaps = function(containerHtml,scope) {
       var deferred = $q.defer();   
       that = this;
       this.containerHTML = containerHtml;
@@ -24,15 +24,17 @@ angular.module('googleMapsSrv', [])
       this.infoWindow;
       this.googleMapsLoaded  = deferred.promise;
 
+      $window.successMapApiLoaded = deferred.resolve;
+
       (function() {
          var script = document.createElement('script');
          script.type = 'text/javascript';
-         script.async = false;
-         script.src = 'http://maps.googleapis.com/maps/api/js?libraries=geometry,drawing,places&amp;sensor=false';
-         script.onload = function () {
-            that.currentScope.$apply(deferred.resolve());
+         script.src = 'http://maps.googleapis.com/maps/api/js?libraries=geometry,drawing,places&amp;sensor=false&callback=successMapApiLoaded';
+         script.onload = function () {            
+            console.log('google-loader has been loaded, but not the maps-API');
          };
-        document.body.appendChild(script);
+         document.body.appendChild(script);
+         //document.getElementsByTagName("head")[0].appendChild(script);
       })();
    };
     
