@@ -12,15 +12,28 @@ angular.module('googleMapsSrv', [])
 .factory('googleMapsService',function($q) {
    var that; 
 
-   var googleMaps = function(containerHtml,scope) {        
+   var googleMaps = function(containerHtml,scope) {
+      var deferred = $q.defer();   
       that = this;
       this.containerHTML = containerHtml;
-      this.map; 
+      this.map;
       this.currentScope = scope;
       this.drawingManager;
       this.autocomplete;
       this.fixedBounds = {};
-      this.infoWindow = new google.maps.InfoWindow ({maxWidth:400});
+      this.infoWindow;
+      this.googleMapsLoaded  = deferred.promise;
+
+      (function() {
+         var script = document.createElement('script');
+         script.type = 'text/javascript';
+         script.async = false;
+         script.src = 'http://maps.googleapis.com/maps/api/js?libraries=geometry,drawing,places&amp;sensor=false';
+         script.onload = function () {
+            that.currentScope.$apply(deferred.resolve());
+         };
+        document.body.appendChild(script);
+      })();
    };
     
    googleMaps.prototype.loadMap = function(customOptions) {
