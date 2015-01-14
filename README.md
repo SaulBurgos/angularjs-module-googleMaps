@@ -48,12 +48,13 @@ List of Methods:
 
 
 ##Setup:
-```
+
 **Load the module in your index.html**
-```
+
 <script src="googleMapsSrv.js"></script>
-```
+
 **Inject the module:**
+
 ```
 angular.module('myApp', [
   'googleMapsSrv'
