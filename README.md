@@ -48,9 +48,6 @@ List of Methods:
 
 
 ##Setup:
-**Load Google Maps in your index.html**
-```
-<script src="http://maps.googleapis.com/maps/api/js?libraries=geometry,drawing,places&amp;sensor=false"></script>
 ```
 **Load the module in your index.html**
 ```
