@@ -66,10 +66,11 @@ angular.module('myApp', [
 ```
 .controller('MyCtrl1', function($scope,googleMapsService) {
 
-	$scope.mapSrv = new googleMapsService(document.querySelector('#googleMap'),$scope);
-
 	$scope.$on('$viewContentLoaded', function() {
-   	$scope.mapSrv.loadMap();
+   		$scope.mapSrv = new googleMapsService(document.querySelector('#googleMap'),$scope);
+		$scope.mapSrv.googleMapsLoaded.then(function() {
+		       $scope.mapSrv.loadMap();		
+		});
 	});
 
 });
