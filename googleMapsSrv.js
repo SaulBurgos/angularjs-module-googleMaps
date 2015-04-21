@@ -44,7 +44,7 @@ angular.module('googleMapsSrv', [])
          center: new google.maps.LatLng(-25.363882,131.044922),
          zoom: 8
       };        
-        
+      this.infoWindow = new google.maps.InfoWindow({ maxWidth: 400 });
       var optionsMap;
       if(typeof customOptions !== 'undefined') {
          optionsMap = customOptions;
