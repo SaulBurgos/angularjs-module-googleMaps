@@ -36,6 +36,7 @@ List of Methods:
 * serializeMarker
 * geolocateUser
 * getBoundsFromString
+* getBoundsFromPolygon
 * getRandomPositionByBounds
 * generateRandomMarkers
 * showMarkers
