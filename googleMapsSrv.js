@@ -270,6 +270,24 @@ angular.module('googleMapsSrv', [])
       });
       return bounds;
    };
+   
+   //use in conjuction with drawing manager method in this service
+   googleMaps.prototype.serializeDrawingShape = function (shape) {
+      var serializeObj;
+      switch (shape.type) {
+         case 'circle':
+            serializeObj = this.serializeCircle(shape);               
+         break;
+         case 'rectangle':
+            serializeObj = this.serializeRectangle(shape);
+         break;
+
+         case 'polygon':
+            serializeObj = this.serializePolygon(shape);
+         break;         
+      }
+      return serializeObj;
+   };
 
    //create a bounds from a string 
    googleMaps.prototype.getBoundsFromString = function(stringBounds) {
