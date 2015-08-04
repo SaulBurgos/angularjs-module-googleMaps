@@ -258,7 +258,18 @@ angular.module('googleMapsSrv', [])
       }else {
          return [randomLat, randomLng];
       }
-   };    
+   };
+   
+   //create a bounds from a Polygon
+   googleMaps.prototype.getBoundsFromPolygon = function (polygon) {
+      //initialize the bounds
+      var bounds = new google.maps.LatLngBounds();
+
+      polygon.getPath().forEach(function (latLng) {
+         bounds.extend(latLng);
+      });
+      return bounds;
+   };
 
    //create a bounds from a string 
    googleMaps.prototype.getBoundsFromString = function(stringBounds) {
