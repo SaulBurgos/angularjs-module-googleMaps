@@ -288,6 +288,25 @@ angular.module('googleMapsSrv', [])
       }
       return serializeObj;
    };
+   
+   //use in conjuction with drawing manager method in this service
+   googleMaps.prototype.deserializeDrawingShape = function (shape) {
+      var overlay;
+
+      switch (shape.type) {
+         case 'circle':
+            overlay = this.deserializeCircle(shape);
+            break;
+         case 'rectangle':
+            overlay = this.deserializeRectangle(shape);
+            break;
+
+         case 'polygon':
+            overlay = this.deserializePolygon(shape);
+            break;
+      }
+      return overlay;
+   };
 
    //create a bounds from a string 
    googleMaps.prototype.getBoundsFromString = function(stringBounds) {
