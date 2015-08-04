@@ -27,6 +27,7 @@ List of Methods:
 * deserializeMvcArray
 * deserializeRectangle
 * deserializeMaker
+* serializeDrawingShape
 * serializeMap
 * serializeCircle
 * serializePolygon
