@@ -395,7 +395,124 @@ angular.module('googleMapsSrv', [])
    };
 
    // create custom method to add to google map
-   googleMaps.prototype.addCustomMethods =  function(){
+   googleMaps.prototype.addCustomMethods =  function() {
+    
+       google.maps.Polygon.prototype.getCenter = function () {
+         var resultLat = 0;
+         var resultLng = 0;
+         this.getPath().forEach(function (element, index) {
+            resultLat += element.lat();
+            resultLng += element.lng();
+         });
+         resultLat = resultLat / this.getPath().getLength();
+         resultLng = resultLng / this.getPath().getLength();
+   
+         return new google.maps.LatLng(resultLat, resultLng);
+      }
+      
+      //code copy from https://github.com/bramus/google-maps-polygon-moveto
+      if (!google.maps.Polygon.prototype.getBounds) {
+
+         google.maps.Polygon.prototype.getBounds = function () {
+            var bounds = new google.maps.LatLngBounds();
+            var paths = this.getPaths();
+            var path;
+
+            for (var p = 0; p < paths.getLength() ; p++) {
+               path = paths.getAt(p);
+               for (var i = 0; i < path.getLength() ; i++) {
+                  bounds.extend(path.getAt(i));
+               }
+            }
+
+            return bounds;
+         };
+
+      }
+      
+      //code copy from https://github.com/bramus/google-maps-polygon-moveto
+      google.maps.Polygon.prototype.moveTo = function (latLng) {
+
+         // our vars
+         var boundsCenter = this.getBounds().getCenter(), // center of the polygonbounds
+            paths = this.getPaths(), // paths that make up the polygon
+            newPoints = [], // array on which we'll store our new points
+            newPaths = []; // array containing the new paths that make up the polygon
+
+         // geodesic enabled: we need to recalculate every point relatively
+         if (this.geodesic) {
+
+            // loop all the points of the original path and calculate the bearing + distance of that point relative to the center of the shape
+            for (var p = 0; p < paths.getLength() ; p++) {
+               path = paths.getAt(p);
+               newPoints.push([]);
+
+               for (var i = 0; i < path.getLength() ; i++) {
+                  newPoints[newPoints.length - 1].push({
+                     heading: google.maps.geometry.spherical.computeHeading(boundsCenter, path.getAt(i)),
+                     distance: google.maps.geometry.spherical.computeDistanceBetween(boundsCenter, path.getAt(i))
+                  });
+               }
+            }
+
+            // now that we have the "relative" points, rebuild the shapes on the new location around the new center
+            for (var j = 0, jl = newPoints.length; j < jl; j++) {
+               var shapeCoords = [],
+                  relativePoint = newPoints[j];
+               for (var k = 0, kl = relativePoint.length; k < kl; k++) {
+                  shapeCoords.push(google.maps.geometry.spherical.computeOffset(
+                     latLng,
+                     relativePoint[k].distance,
+                     relativePoint[k].heading
+                  ));
+               }
+               newPaths.push(shapeCoords);
+            }
+
+         } else { // geodesic not enabled: adjust the coordinates pixelwise
+
+            var latlngToPoint = function (map, latlng) {
+               var normalizedPoint = map.getProjection().fromLatLngToPoint(latlng); // returns x,y normalized to 0~255
+               var scale = Math.pow(2, map.getZoom());
+               var pixelCoordinate = new google.maps.Point(normalizedPoint.x * scale, normalizedPoint.y * scale);
+               return pixelCoordinate;
+            };
+            var pointToLatlng = function (map, point) {
+               var scale = Math.pow(2, map.getZoom());
+               var normalizedPoint = new google.maps.Point(point.x / scale, point.y / scale);
+               var latlng = map.getProjection().fromPointToLatLng(normalizedPoint);
+               return latlng;
+            };
+
+            // calc the pixel position of the bounds and the new latLng
+            var boundsCenterPx = latlngToPoint(this.map, boundsCenter),
+               latLngPx = latlngToPoint(this.map, latLng);
+
+            // calc the pixel difference between the bounds and the new latLng
+            var dLatPx = (boundsCenterPx.y - latLngPx.y) * (-1),
+               dLngPx = (boundsCenterPx.x - latLngPx.x) * (-1);
+
+            // adjust all paths
+            for (var p = 0; p < paths.getLength() ; p++) {
+               path = paths.getAt(p);
+               newPaths.push([]);
+               for (var i = 0; i < path.getLength() ; i++) {
+                  var pixels = latlngToPoint(this.map, path.getAt(i));
+                  pixels.x += dLngPx;
+                  pixels.y += dLatPx;
+                  newPaths[newPaths.length - 1].push(pointToLatlng(this.map, pixels));
+               }
+            }
+
+         }
+
+         // Update the path of the Polygon to the new path
+         this.setPaths(newPaths);
+
+         // Return the polygon itself so we can chain
+         return this;
+
+      };
       
       google.maps.Polygon.prototype.isInside = function(point) {
          // ray casting alogrithm http://rosettacode.org/wiki/Ray-casting_algorithm
