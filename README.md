@@ -48,6 +48,9 @@ List of Methods:
 * restrictBounds
 * loadMap
 * openInfoWindow 
+* polygon.getCenter(); //get center of polygon
+* polygon.getBounds(); //get bounds of polygon
+* polygon.moveTo(); //move a polygon to another point
 
 
 ##Setup:
