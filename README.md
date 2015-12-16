@@ -51,6 +51,9 @@ List of Methods:
 * polygon.getCenter(); //get center of polygon
 * polygon.getBounds(); //get bounds of polygon
 * polygon.moveTo(); //move a polygon to another point
+* moveMarker
+* getPixelPositionMarker
+* getPositionFromPixel
 
 
 ##Setup:
