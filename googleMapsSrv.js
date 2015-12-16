@@ -813,6 +813,48 @@ angular.module('googleMapsSrv', [])
       var circleArea = radius*radius*Math.PI;
       return circleArea.toFixed(2);
    }
+   
+   //Move marker to new position using a new center, EX: markers inside a polygon, then you need to move the polygon and all marker should move with their relative position 
+   googleMaps.prototype.moveMarker = function(marker,oldOverlayCenter,newOverlayCenter) {
+     var lat = newCenter.lat() + marker.position.lat() - oldCenter.lat();
+     var lng = newCenter.lng() + marker.position.lng() - oldCenter.lng();
+     return {lat: lat, lng: lng};
+   }
+   
+  //Get the position in pixel of a marker based on the map like container
+  //http://stackoverflow.com/questions/1538681/how-to-call-fromlatlngtodivpixel-in-google-maps-api-v3
+  googleMaps.prototype.getPixelPositionMarker = function(marker) {
+    var scale = Math.pow(2, this.map.getZoom());
+    var proj = this.map.getProjection();
+    var bounds = this.map.getBounds();
+
+    var nw = proj.fromLatLngToPoint(
+     new google.maps.LatLng(
+          bounds.getNorthEast().lat(),
+          bounds.getSouthWest().lng()
+     ));
+    var point = proj.fromLatLngToPoint(marker.getPosition());
+    return new google.maps.Point(Math.floor((point.x - nw.x) * scale),Math.floor((point.y - nw.y) * scale));
+  }
+
+  //Get the latlng position based on the map like container 
+  googleMaps.prototype.getPositionFromPixel = function(pixel) {
+   var scale = Math.pow(2, this.map.getZoom());
+   var proj = this.map.getProjection();
+   var bounds = this.map.getBounds();
+
+   var nw = proj.fromLatLngToPoint(
+     new google.maps.LatLng(
+       bounds.getNorthEast().lat(),
+       bounds.getSouthWest().lng()
+     ));
+   var point = new google.maps.Point();
+
+   point.x = pixel.x / scale + nw.x;
+   point.y = pixel.y / scale + nw.y;
+
+   return proj.fromPointToLatLng(point);
+  }
 
    return googleMaps;
 })
